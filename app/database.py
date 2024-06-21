@@ -4,7 +4,7 @@ from sqlmodel import create_engine, SQLModel
 
 # create database engine
 # engine = create_engine(config.get_settings().postgres_database_url)
-engine = create_engine('postgresql://postgres:YoungOsab@localhost:5433/friend_connection_backend_db')
+engine = create_engine('postgresql://postgres:postgres@db:5432/friend_connection_backend_db')
 
 
 def create_db_and_tables():

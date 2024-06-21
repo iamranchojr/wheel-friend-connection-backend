@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: friend_connection_backend_db
+    platform: linux/amd64
+    image: postgres:alpine
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=friend_connection_backend_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  friend_connection_backend:
+    platform: linux/amd64
+    build: .
+    command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8015 --reload
+    container_name: friend_connection_backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/friend_connection_backend_db
+    volumes:
+      - .:/code
+    ports:
+      - "8015:8015"
+    depends_on:
+      - db
