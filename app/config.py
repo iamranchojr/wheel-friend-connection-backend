@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     postgres_database_url: str
 
     # TODD: figure out why .env file is not working
-    model_config = SettingsConfigDict(env_file='.env')
+    model_config = SettingsConfigDict(env_file='../.env')
 
 
 @lru_cache
