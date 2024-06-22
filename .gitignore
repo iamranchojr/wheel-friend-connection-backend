@@ -134,6 +134,7 @@ dmypy.json
 .idea/
 
 postgres/
+pgadmin-data/
 
 .DS_Store
 .DS_Store/
