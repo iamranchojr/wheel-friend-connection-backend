@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from .user import User
+    from .user_model import User
 
 
 class FriendStatus(str, Enum):
@@ -34,5 +34,5 @@ class Friend(SQLModel, table=True):
         back_populates='friends_received',
     )
 
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
