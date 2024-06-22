@@ -1,11 +1,11 @@
 from sqlmodel import create_engine, SQLModel, Session, select
+
+from .config import settings
 from .models import *
 
-# from . import config
 
 # create database engine
-# engine = create_engine(config.get_settings().postgres_database_url)  # TODO: use env value
-engine = create_engine('postgresql://postgres:postgres@db:5432/friend_connection_backend_db')
+engine = create_engine(settings.DATABASE_URL)
 
 
 def create_db_and_tables():
