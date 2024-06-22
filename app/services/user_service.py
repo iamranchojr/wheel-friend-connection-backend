@@ -43,27 +43,13 @@ def get_user_by_email(db: Session, email: str) -> User | None:
     return user
 
 
-def authenticate_user(db: Session, email: str, password: str) -> User | None:
+def get_user_by_username(db: Session, username: str) -> User | None:
     """
-    Authenticates a user
+    Gets a user by username
     :param db: database session
-    :param email: user email
-    :param password: user password
-    :return: user if success else None
+    :param username: user username
+    :return: user if found else None
     """
-    # first retrieve user by email
-    user = get_user_by_email(db=db, email=email)
-    if not user:
-        # return none if user is not found
-        return None
-
-    # second, verify that the password is correct
-    if not auth.verify_password(
-            plain_password=password,
-            hashed_password=user.hashed_password,
-    ):
-        # return None if password is not correct
-        return None
-
-    # all good, return user
+    query = select(User).where(User.username == username)
+    user = db.exec(query).first()
     return user

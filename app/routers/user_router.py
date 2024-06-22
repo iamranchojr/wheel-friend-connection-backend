@@ -1,23 +1,31 @@
 from http import HTTPStatus
-from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 
-from app import auth
 from app.deps import DatabaseDep
-from app.models import AuthResponse, Token, AuthResponseOut
+from app.models import AuthResponse, AuthResponseOut
 from app.models.user_model import UserRegister
-from app.services import user_service
+from app.services import user_service, auth_service
 
-router = APIRouter()
+
+router = APIRouter(
+    prefix='/users',
+    tags=['users'],
+)
 
 
 @router.post(
     path='/register',
     status_code=status.HTTP_201_CREATED,
     response_model=AuthResponseOut,
+    description='Register a new user with provided name, email, and password.',
+    responses={
+        status.HTTP_409_CONFLICT: {
+            'description': 'Email conflict',
+        }
+    }
 )
-def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
+async def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
     """
     Register a new user.
     :param db: database session
@@ -30,9 +38,10 @@ def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
         email=data.email,
     )
     if user:
+        # if email not available, raise a conflict exception
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
-            detail='Email already registered',
+            detail='Provided email belongs to another user.',
         )
 
     # all good, validate and create user
@@ -42,15 +51,8 @@ def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
         data=data,
     )
 
-    # create access token for user
-    token = Token(
-        access_token=auth.create_access_token(
-            subject=user.id
-        )
-    )
-
     # return access token and user
     return AuthResponse(
-        token=token,
+        token=auth_service.create_token(subject=user.id),
         user=user,
     )
