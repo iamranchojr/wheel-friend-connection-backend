@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlmodel import Session, select
+from sqlmodel import Session, select, col
 
 from app import auth
 from app.models.user_model import UserRegister, User
@@ -65,3 +65,32 @@ def get_user_by_username(db: Session, username: str) -> User | None:
     query = select(User).where(User.username == username)
     user = db.exec(query).first()
     return user
+
+
+def get_active_users(
+        db: Session,
+        query: str = None,
+        seek_id: int = 0,
+        limit: int = 50,
+) -> Sequence[User]:
+    """
+    Gets all active users
+    :param db: database session
+    :param query: query to filter
+    :param seek_id: seek id
+    :param limit: limit
+    """
+    statement = (select(User).where(
+        User.is_active == True,
+
+        # using seek based pagination as it offers more performance benefits compared to offset
+        User.id > seek_id,
+    ))
+
+    if query:
+        # case-insensitive match
+        statement = statement.where(col(User.name).regexp_match(query, 'i'))
+
+    # paginate and return
+    statement = statement.limit(limit)
+    return db.exec(statement).all()

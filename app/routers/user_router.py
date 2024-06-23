@@ -1,10 +1,10 @@
-from http import HTTPStatus
+from typing import Sequence
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Query
 
-from app.deps import DatabaseDep
+from app.deps import DatabaseDep, CurrentUserDep
 from app.models import AuthResponse, AuthResponseOut
-from app.models.user_model import UserRegister
+from app.models.user_model import UserRegister, UserPublic, UserBase
 from app.services import user_service, auth_service
 
 
@@ -40,7 +40,7 @@ async def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
     if user:
         # if email not available, raise a conflict exception
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT,
+            status_code=status.HTTP_409_CONFLICT,
             detail='Provided email belongs to another user.',
         )
 
@@ -55,4 +55,41 @@ async def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
     return AuthResponse(
         token=auth_service.create_token(subject=user.id),
         user=user,
+    )
+
+
+@router.get(
+    path='/list',
+    name='Get all users',
+    description='This endpoint returns all active users friends.',
+    response_model=list[UserPublic],
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'Unauthorized',
+        },
+        status.HTTP_403_FORBIDDEN: {
+            'description': 'Credentials validation failed',
+        },
+    }
+)
+async def get_users(
+        db: DatabaseDep,
+        _: CurrentUserDep,
+        query: str | None = Query(
+            default=None,
+            description='Query to search users by name'
+        ),
+
+        # using seek based pagination as it offers more performance benefits compared to offset
+        seek_id: int = Query(
+            0,
+            description='This value should be the last id of the most recent data that was fetched'
+        ),
+        limit: int = 50,
+) -> Sequence[UserBase]:
+    return user_service.get_active_users(
+        db=db,
+        query=query,
+        seek_id=seek_id,
+        limit=limit,
     )
