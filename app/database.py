@@ -48,8 +48,8 @@ def _create_test_data():
             session.commit()
 
         else:
-            statement = select(Friend).join(User, onclause=Friend.sender_id == User.id)
+            statement = select(Friend)
             print(statement)
             results = session.exec(statement)
             for f in results:
-                print(f'Friend: {f.sender}')
+                print(f'Friend: {f.id}, sender_id: {f.sender_id}, recipient_id: {f.recipient_id}')

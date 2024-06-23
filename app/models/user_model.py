@@ -53,3 +53,7 @@ class CurrentUser(UserBase):
     email: EmailStr
     is_active: bool
     updated_at: datetime
+
+
+class UserPublic(UserBase):
+    id: int

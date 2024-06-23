@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from . import database
-from .routers import user_router, auth_router
+from .routers import user_router, auth_router, friend_router
 
 # fast API instance
 app = FastAPI(title='Friend Connection Backend')
@@ -10,6 +10,7 @@ app = FastAPI(title='Friend Connection Backend')
 # configure routing
 app.include_router(user_router)
 app.include_router(auth_router)
+app.include_router(friend_router)
 
 
 @app.on_event('startup')
