@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from sqlmodel import Session, select
 
 from app import auth
@@ -29,6 +31,16 @@ def create_user(db: Session, data: UserRegister) -> User:
     # refresh user from db and return it
     db.refresh(user)
     return user
+
+
+def get_user_by_id(db: Session, user_id: int) -> User | None:
+    """
+    Gets a user by their id
+    :param db: database session
+    :param user_id: user id
+    :return: user if found else None
+    """
+    return db.get(User, user_id)
 
 
 def get_user_by_email(db: Session, email: str) -> User | None:

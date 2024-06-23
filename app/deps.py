@@ -1,7 +1,6 @@
 from collections.abc import Generator
 from typing import Annotated, Type
 
-import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
@@ -14,7 +13,9 @@ from .models import User, TokenPayload
 from . import auth
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/access-token')
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl='/auth/access-token',
+)
 
 
 def get_db() -> Generator[Session, None, None]:
