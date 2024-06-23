@@ -12,7 +12,7 @@ class UserBase(SQLModel):
     """
     User base model containing shared properties
     """
-    name: str = Field(max_length=255)
+    name: str = Field(max_length=255, index=True)
     status: str = Field(default='Hey there, let\'s digitize our ad processes with Wheel.io')
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -24,6 +24,7 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     username: str = Field(unique=True, index=True, max_length=255)
     email: EmailStr = Field(unique=True, index=True, max_length=255)
+    email_verified_at: datetime | None
     hashed_password: str
     is_active: bool = Field(default=True)
     friends_sent: list['Friend'] | None = Relationship(
@@ -51,6 +52,7 @@ class CurrentUser(UserBase):
     id: int
     username: str
     email: EmailStr
+    email_verified_at: datetime | None
     is_active: bool
     updated_at: datetime
 
