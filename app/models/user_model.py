@@ -24,7 +24,7 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     username: str = Field(unique=True, index=True, max_length=255)
     email: EmailStr = Field(unique=True, index=True, max_length=255)
-    email_verified_at: datetime | None
+    email_verified_at: datetime | None = None
     hashed_password: str
     is_active: bool = Field(default=True)
     friends_sent: list['Friend'] | None = Relationship(

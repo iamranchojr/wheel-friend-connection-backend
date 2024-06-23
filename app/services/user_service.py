@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Sequence
 
 from sqlmodel import Session, select, col
@@ -29,6 +30,31 @@ def create_user(db: Session, data: UserRegister) -> User:
     db.commit()
 
     # refresh user from db and return it
+    db.refresh(user)
+    return user
+
+
+def update_user_status(
+        db: Session,
+        user: User,
+        status: str,
+) -> User:
+    """
+    Updates the status of a user
+    :param db: database session
+    :param user: user to update
+    :param status: user status
+    :return: updated user
+    """
+    # update user status
+    user.status = status
+    user.updated_at = datetime.utcnow()
+
+    # add to db and commit changes
+    db.add(user)
+    db.commit()
+
+    # refresh and return user
     db.refresh(user)
     return user
 
