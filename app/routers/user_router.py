@@ -1,10 +1,10 @@
-from typing import Sequence
+from typing import Sequence, Annotated
 
-from fastapi import APIRouter, HTTPException, status, Query
+from fastapi import APIRouter, HTTPException, status, Query, Body
 
 from app.deps import DatabaseDep, CurrentUserDep
 from app.models import AuthResponse, AuthResponseOut
-from app.models.user_model import UserRegister, UserPublic, UserBase
+from app.models.user_model import UserRegister, UserPublic, UserBase, CurrentUser
 from app.services import user_service, auth_service
 
 
@@ -56,6 +56,37 @@ async def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
         token=auth_service.create_token(subject=user.id),
         user=user,
     )
+
+
+@router.put(
+    path='/me/update-status',
+    name='Update current user status',
+    description='This endpoint updates the status of the current user, and broadcasts a '
+                'real time notification to user friends that are currently online',
+    response_model=CurrentUser,
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'Unauthorized',
+        },
+        status.HTTP_403_FORBIDDEN: {
+            'description': 'Credentials validation failed',
+        },
+    }
+)
+async def update_current_user_status(
+        db: DatabaseDep,
+        current_user: CurrentUserDep,
+        new_status: Annotated[str, Body(embed=True)]
+) -> UserBase:
+    user = user_service.update_user_status(
+        db=db,
+        user=current_user,
+        status=new_status,
+    )
+
+    # TODO: broadcast websocket event
+
+    return user
 
 
 @router.get(
