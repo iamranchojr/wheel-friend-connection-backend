@@ -34,6 +34,31 @@ def create_user(db: Session, data: UserRegister) -> User:
     return user
 
 
+def update_user_bio(
+        db: Session,
+        user: User,
+        bio: str,
+) -> User:
+    """
+    Updates the bio of a user
+    :param db: database session
+    :param user: user to update
+    :param bio: new bio
+    :return: updated user
+    """
+    # update user bio
+    user.bio = bio
+    user.updated_at = datetime.utcnow()
+
+    # add to db and commit changes
+    db.add(user)
+    db.commit()
+
+    # refresh and return user
+    db.refresh(user)
+    return user
+
+
 def update_user_status(
         db: Session,
         user: User,

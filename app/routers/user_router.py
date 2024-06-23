@@ -60,7 +60,7 @@ async def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
 
 @router.put(
     path='/me',
-    name='Retrieve current user',
+    name='Get current user',
     description='This endpoint returns the currently authenticated user.',
     response_model=CurrentUser,
     responses={
@@ -72,10 +72,36 @@ async def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
         },
     }
 )
-async def update_current_user_status(
+async def get_current_user(
         current_user: CurrentUserDep,
 ) -> UserBase:
     return current_user
+
+
+@router.put(
+    path='/me/update-bio',
+    name='Update current user bio',
+    description='This endpoint updates the bio of the current user.',
+    response_model=CurrentUser,
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'Unauthorized',
+        },
+        status.HTTP_403_FORBIDDEN: {
+            'description': 'Credentials validation failed',
+        },
+    }
+)
+async def update_current_user_bio(
+        db: DatabaseDep,
+        current_user: CurrentUserDep,
+        bio: Annotated[str, Body(embed=True)]
+) -> UserBase:
+    return user_service.update_user_bio(
+        db=db,
+        user=current_user,
+        bio=bio,
+    )
 
 
 @router.put(

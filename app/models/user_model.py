@@ -13,6 +13,7 @@ class UserBase(SQLModel):
     User base model containing shared properties
     """
     name: str = Field(max_length=255, index=True)
+    bio: str | None = None
     status: str = Field(default='Hey there, let\'s digitize our ad processes with Wheel.io')
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -44,6 +45,7 @@ class User(UserBase, table=True):
 
 class UserRegister(SQLModel):
     name: str = Field(max_length=255)
+    bio: str | None = None
     email: EmailStr = Field(max_length=255)
     password: str = Field(min_length=8, max_length=40)
 
