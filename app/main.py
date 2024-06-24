@@ -13,6 +13,7 @@ app = FastAPI(title='Friend Connection Backend')
 cors_allowed_origins = [
     'http://localhost',
     'http://localhost:3000',
+    'https://wfc-app-a07cd74c45cb.herokuapp.com',
 ]
 
 # apply cors
