@@ -1,4 +1,4 @@
-from sqlmodel import create_engine, SQLModel, Session, select, or_
+from sqlmodel import create_engine, SQLModel, Session
 
 from . import auth
 from .config import settings
@@ -6,7 +6,14 @@ from .models import *
 
 
 # create database engine
-engine = create_engine(settings.DATABASE_URL)
+database_url = settings.DATABASE_URL
+
+if database_url.startswith('postgres://'):
+    # to get around issue with heroku postgres
+    # https://stackoverflow.com/questions/52543783/connecting-heroku-database-to-sqlalchemy
+    database_url = database_url.replace('postgres://', 'postgresql://')
+
+engine = create_engine(database_url)
 
 
 def create_db_and_tables():
