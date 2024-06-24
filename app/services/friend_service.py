@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Sequence
 
-from sqlmodel import Session, select, or_
+from sqlmodel import Session, select, or_, col
 
 from app.models import FriendRequest, Friend, User, FriendStatus
 
@@ -206,7 +206,7 @@ def get_user_friends(
     :return: sequence of friend objects
     """
     # query only accepted and pending friends
-    query = select(Friend).where(
+    statement = select(Friend).where(
         or_(
             Friend.sender_id == user.id,
             Friend.recipient_id == user.id,
@@ -215,9 +215,13 @@ def get_user_friends(
             Friend.status == FriendStatus.Pending,
             Friend.status == FriendStatus.Accepted,
         ),
+    ).order_by(col(Friend.created_at).desc())
 
+    # seek data
+    if seek_id > 0:
         # using seek based pagination as it offers more performance benefits compared to offset
-        Friend.id > seek_id
-    ).limit(limit)
+        statement = statement.where(User.id < seek_id)
 
-    return db.exec(query).all()
+    # paginate and return
+    statement = statement.limit(limit)
+    return db.exec(statement).all()

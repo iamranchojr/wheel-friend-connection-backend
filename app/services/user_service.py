@@ -133,14 +133,19 @@ def get_active_users(
     """
     statement = (select(User).where(
         User.is_active == True,
-
-        # using seek based pagination as it offers more performance benefits compared to offset
-        User.id > seek_id,
     ))
 
     if query:
         # case-insensitive match
         statement = statement.where(col(User.name).regexp_match(query, 'i'))
+
+    # order by created at in desc order
+    statement = statement.order_by(col(User.created_at).desc())
+
+    # seek data
+    if seek_id > 0:
+        # using seek based pagination as it offers more performance benefits compared to offset
+        statement = statement.where(User.id < seek_id)
 
     # paginate and return
     statement = statement.limit(limit)

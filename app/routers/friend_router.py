@@ -97,7 +97,6 @@ _accept_decline_friend_responses = {
     path='/{friend_id}/accept',
     name='Accept Friend Request',
     description='This endpoint accepts a pending friend request from another user.',
-    status_code=status.HTTP_201_CREATED,
     response_model=FriendPublic,
     responses=_accept_decline_friend_responses
 )
@@ -141,7 +140,6 @@ async def accept_friend(
     path='/{friend_id}/decline',
     name='Decline Friend Request',
     description='This endpoint declines a pending friend request from another user.',
-    status_code=status.HTTP_201_CREATED,
     response_model=FriendPublic,
     responses=_accept_decline_friend_responses
 )
