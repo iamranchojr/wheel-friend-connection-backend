@@ -143,6 +143,40 @@ def get_friend_by_recipient_id(
     return db.exec(query).first()
 
 
+def get_friend_between_users(
+        db: Session,
+        user_a_id: int,
+        user_b_id: int,
+) -> Friend | None:
+    """
+    Gets a friend object between two users
+    :param db: database session
+    :param user_a_id: id of the first user
+    :param user_b_id: id of the second user
+    :return: friend if found else None
+    """
+    # first query for when user_a is a sender and user_b recipient
+    query = select(Friend).where(
+        Friend.sender_id == user_a_id,
+        Friend.recipient_id == user_b_id,
+    )
+
+    friend = db.exec(query).first()
+    if friend:
+        # friend object exists, return
+        return friend
+
+    # none found with first case, switch it around with user_a
+    # being recipient and user_b being sender
+    # TODO: research into how to combine this in one query
+    query = select(Friend).where(
+        Friend.sender_id == user_b_id,
+        Friend.recipient_id == user_a_id,
+    )
+
+    return db.exec(query).first()
+
+
 def get_friend_by_id(
         db: Session,
         friend_id: int

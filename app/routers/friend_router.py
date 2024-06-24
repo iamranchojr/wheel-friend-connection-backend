@@ -215,3 +215,43 @@ async def get_friends(
     )
 
     return friends
+
+
+@router.get(
+    path='/get-with-other-user',
+    name='Get Friend With Other User',
+    description='This endpoint returns a friend record between current user and other user.',
+    response_model=FriendPublic,
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'Unauthorized',
+        },
+        status.HTTP_403_FORBIDDEN: {
+            'description': 'Credentials validation failed',
+        },
+        status.HTTP_404_NOT_FOUND: {
+            'description': 'No record found',
+        },
+    }
+)
+async def get_friend_with_other_user(
+        db: DatabaseDep,
+        current_user: CurrentUserDep,
+        other_user_id: int = Query(
+            0,
+            description='id of the other user'
+        ),
+) -> Friend:
+    friend = friend_service.get_friend_between_users(
+        db=db,
+        user_a_id=current_user.id,
+        user_b_id=other_user_id,
+    )
+
+    if not friend:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='No friend record was found',
+        )
+
+    return friend
