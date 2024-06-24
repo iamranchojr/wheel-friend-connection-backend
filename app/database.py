@@ -1,4 +1,4 @@
-from sqlmodel import create_engine, SQLModel, Session, select
+from sqlmodel import create_engine, SQLModel, Session, select, or_
 
 from .config import settings
 from .models import *
@@ -48,8 +48,23 @@ def _create_test_data():
             session.commit()
 
         else:
-            statement = select(Friend)
-            print(statement)
-            results = session.exec(statement)
-            for f in results:
-                print(f'Friend: {f.id}, sender_id: {f.sender_id}, recipient_id: {f.recipient_id}')
+            pass
+            # statement = select(Friend)
+            # print(statement)
+            # results = session.exec(statement)
+            # for f in results:
+            #     print(f'Friend: {f.id}, sender_id: {f.sender_id}, recipient_id: {f.recipient_id}')
+
+            # statement = select(User).where(
+            #     or_(
+            #         User.friends_sent.any(recipient_id=3, status=FriendStatus.Accepted),
+            #         User.friends_received.any(sender_id=3, status=FriendStatus.Accepted),
+            #     )
+            # )
+
+            # print(statement)
+            #
+            # results = session.exec(statement)
+            #
+            # for u in results:
+            #     print(f'User: {u.name}, {u.id}')

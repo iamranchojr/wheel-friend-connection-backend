@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Sequence
 
-from sqlmodel import Session, select, col
+from sqlmodel import Session, select, col, or_
 
 from app import auth
+from app.models import FriendStatus
 from app.models.user_model import UserRegister, User
 
 
@@ -131,9 +132,9 @@ def get_active_users(
     :param seek_id: seek id
     :param limit: limit
     """
-    statement = (select(User).where(
+    statement = select(User).where(
         User.is_active == True,
-    ))
+    )
 
     if query:
         # case-insensitive match
@@ -141,6 +142,37 @@ def get_active_users(
 
     # order by created at in desc order
     statement = statement.order_by(col(User.created_at).desc())
+
+    # seek data
+    if seek_id > 0:
+        # using seek based pagination as it offers more performance benefits compared to offset
+        statement = statement.where(User.id < seek_id)
+
+    # paginate and return
+    statement = statement.limit(limit)
+    return db.exec(statement).all()
+
+
+def get_users_who_are_friends_with_user(
+        db: Session,
+        user_id: int,
+        seek_id: int = 0,
+        limit: int = 50,
+) -> Sequence[User]:
+    """
+    Gets all users who are friends with a user. It only returns those that friendship is accepted
+    :param db: database session
+    :param user_id: user id
+    :param seek_id: seek id
+    :param limit: limit
+    :return: users who are friends with a user
+    """
+    statement = select(User).where(
+        or_(
+            User.friends_sent.any(recipient_id=user_id, status=FriendStatus.Accepted),
+            User.friends_received.any(sender_id=user_id, status=FriendStatus.Accepted),
+        )
+    ).order_by(col(User.updated_at).desc())
 
     # seek data
     if seek_id > 0:
