@@ -15,7 +15,7 @@ the application. This is needed by docker to properly configure and run the appl
 There an .env.example file that will let you know what values are needed.
 
 ```
-docker-compose up
+docker-compose up -d --build
 ```
 
 This command will also build the container and install all necessary dependencies, so you do not have to do it manually.
