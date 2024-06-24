@@ -22,6 +22,7 @@ docker-compose up -d --build
 This command will also build the container and install all necessary dependencies, so you do not have to do it manually.
 And that is it, you can now access the docs and test out the APIs locally on your device.
 
-To get the full experience of this API, you can find the corresponding frontend application [here](https://github.com/iamranchojr/wheel-friend-connection-frontend).
+To get the full experience of this API, you can find the corresponding github for the frontend application [here](https://github.com/iamranchojr/wheel-friend-connection-frontend). 
+A deployed and ready to test right away version can be found [here](https://wfc-app-a07cd74c45cb.herokuapp.com).
 
 Contact me via [email](mailto:iamranchojr@gmail.com) if you have questions or seek clarifications.
