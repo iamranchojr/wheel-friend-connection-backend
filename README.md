@@ -3,7 +3,8 @@ Wheel Friend Connection Backend: a FastAPI powered backend that allows users to 
 send and receive friend requests, and get live updates on friends' statuses.
 
 ### API Documentation
-An OpenAPI documentation of the API can be found via the following url on [localhost](http://localhost:8015/docs). 
+An OpenAPI documentation of the API can be found via the following url [here](https://wfc-backend-api-8bd958c0167d.herokuapp.com/docs). 
+
 Below are instructions on how to run this API locally on your device using Docker.
 
 ### Getting started
