@@ -1,5 +1,6 @@
 from sqlmodel import create_engine, SQLModel, Session, select, or_
 
+from . import auth
 from .config import settings
 from .models import *
 
@@ -13,24 +14,25 @@ def create_db_and_tables():
     Creates the database and tables.
     """
     SQLModel.metadata.create_all(engine)
-    _create_test_data()
+    _create_seed_data()
 
 
-def _create_test_data():
+def _create_seed_data():
     with Session(engine) as session:
         if session.query(User).count() == 0:
             bob = User(
-                name='Bob',
-                email='bob@getwheel.io',
-                username='bob@getwheel.io',
-                hashed_password='somehashedpassword',
+                name='Jose',
+                email='jose@getwheel.io',
+                username='jose@getwheel.io',
+                bio='We are building something amazing at getwheel.io. Send a friend request to learn more',
+                hashed_password=auth.get_password_hash('BOBPassword'),
             )
 
             alice = User(
                 name='Alice',
                 email='alice@getwheel.io',
                 username='alice@getwheel.io',
-                hashed_password='somehashedpassword',
+                hashed_password=auth.get_password_hash('AlicePassword'),
                 status='Hi, I am Alice and it\'s nice to meet you'
             )
 
@@ -39,32 +41,10 @@ def _create_test_data():
             session.commit()
 
             # create a friend object for bob and alice
-            f = Friend(
-                sender_id=bob.id,
-                recipient_id=alice.id,
-            )
-
-            session.add(f)
-            session.commit()
-
-        else:
-            pass
-            # statement = select(Friend)
-            # print(statement)
-            # results = session.exec(statement)
-            # for f in results:
-            #     print(f'Friend: {f.id}, sender_id: {f.sender_id}, recipient_id: {f.recipient_id}')
-
-            # statement = select(User).where(
-            #     or_(
-            #         User.friends_sent.any(recipient_id=3, status=FriendStatus.Accepted),
-            #         User.friends_received.any(sender_id=3, status=FriendStatus.Accepted),
-            #     )
+            # f = Friend(
+            #     sender_id=bob.id,
+            #     recipient_id=alice.id,
             # )
 
-            # print(statement)
-            #
-            # results = session.exec(statement)
-            #
-            # for u in results:
-            #     print(f'User: {u.name}, {u.id}')
+            # session.add(f)
+            # session.commit()
