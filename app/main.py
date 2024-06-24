@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from . import database
+from .config import settings
 from .routers import user_router, auth_router, friend_router, websocket_router
 
 # fast API instance
@@ -20,6 +23,18 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+if settings.SECURE_SSL_REDIRECT:
+    # apply redirect to https middleware
+    app.add_middleware(HTTPSRedirectMiddleware)
+
+    app.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=[
+            'wfc-backend-api-8bd958c0167d.herokuapp.com',
+            '*.wfc-backend-api-8bd958c0167d.herokuapp.com',
+        ]
+    )
 
 # configure routing
 app.include_router(user_router)

@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    SECURE_SSL_REDIRECT: bool = False
 
 
 settings = Settings()
