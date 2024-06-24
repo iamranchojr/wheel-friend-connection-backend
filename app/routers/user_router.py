@@ -130,7 +130,9 @@ async def update_current_user_status(
         status=new_status,
     )
 
-    # TODO: broadcast websocket event
+    # TODO: Ideally we should broadcast the websocket event from the backend
+    #  but for the purpose of this task and as a proof of work,
+    #  the frontend will handle it by sending a message over the channel
 
     return user
 
