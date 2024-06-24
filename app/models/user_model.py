@@ -16,6 +16,7 @@ class UserBase(SQLModel):
     bio: str | None = None
     status: str = Field(default='Hey there, let\'s digitize our ad processes with Wheel.io')
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class User(UserBase, table=True):
@@ -40,7 +41,6 @@ class User(UserBase, table=True):
             'foreign_keys': 'Friend.recipient_id'
         }
     )
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class UserRegister(SQLModel):
@@ -56,7 +56,6 @@ class CurrentUser(UserBase):
     email: EmailStr
     email_verified_at: datetime | None
     is_active: bool
-    updated_at: datetime
 
 
 class UserPublic(UserBase):

@@ -3,7 +3,7 @@ from typing import Sequence, Annotated
 from fastapi import APIRouter, HTTPException, status, Query, Body
 
 from app.deps import DatabaseDep, CurrentUserDep
-from app.models import AuthResponse, AuthResponseOut
+from app.models import AuthResponse, AuthResponseOut, User
 from app.models.user_model import UserRegister, UserPublic, UserBase, CurrentUser
 from app.services import user_service, auth_service
 
@@ -167,6 +167,37 @@ async def get_users(
     return user_service.get_active_users(
         db=db,
         query=query,
+        seek_id=seek_id,
+        limit=limit,
+    )
+
+
+@router.get(
+    path='/list-users-who-are-friends-with-current-user',
+    name='Get all users who are friends with current user',
+    description='This endpoint returns all users who are friends with current user.',
+    response_model=list[UserPublic],
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {
+            'description': 'Unauthorized',
+        },
+        status.HTTP_403_FORBIDDEN: {
+            'description': 'Credentials validation failed',
+        },
+    }
+)
+async def get_users_who_are_friends_with_user(
+        db: DatabaseDep,
+        current_user: CurrentUserDep,
+        seek_id: int = Query(
+            0,
+            description='This value should be the last id of the most recent data that was fetched'
+        ),
+        limit: int = 50,
+) -> Sequence[User]:
+    return user_service.get_users_who_are_friends_with_user(
+        db=db,
+        user_id=current_user.id,
         seek_id=seek_id,
         limit=limit,
     )
