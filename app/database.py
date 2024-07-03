@@ -1,30 +1,19 @@
-from sqlmodel import create_engine, SQLModel, Session
+from sqlmodel import create_engine, Session
 
 from . import auth
-from .config import settings
+from .config import get_database_url
+
+# make sure all SQLModel models are imported (app.models) before initializing DB
+# otherwise, SQLModel might fail to initialize relationships properly
+# for more details: https://github.com/tiangolo/full-stack-fastapi-template/issues/28
 from .models import *
 
 
 # create database engine
-database_url = settings.DATABASE_URL
-
-if database_url.startswith('postgres://'):
-    # to get around issue with heroku postgres
-    # https://stackoverflow.com/questions/52543783/connecting-heroku-database-to-sqlalchemy
-    database_url = database_url.replace('postgres://', 'postgresql://')
-
-engine = create_engine(database_url)
+engine = create_engine(get_database_url())
 
 
-def create_db_and_tables():
-    """
-    Creates the database and tables.
-    """
-    SQLModel.metadata.create_all(engine)
-    _create_seed_data()
-
-
-def _create_seed_data():
+def init_db() -> None:
     with Session(engine) as session:
         if session.query(User).count() == 0:
             bob = User(

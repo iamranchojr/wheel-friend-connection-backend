@@ -46,7 +46,7 @@ app.include_router(websocket_router)
 
 @app.on_event('startup')
 def on_startup():
-    database.create_db_and_tables()
+    database.init_db()
 
 
 @app.get('/')
