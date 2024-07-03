@@ -58,7 +58,7 @@ async def register_user(db: DatabaseDep, data: UserRegister) -> AuthResponse:
     )
 
 
-@router.put(
+@router.get(
     path='/me',
     name='Get current user',
     description='This endpoint returns the currently authenticated user.',
