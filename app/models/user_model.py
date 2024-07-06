@@ -29,6 +29,7 @@ class User(UserBase, table=True):
     email_verified_at: datetime | None = None
     hashed_password: str
     is_active: bool = Field(default=True)
+    is_superuser: bool = Field(default=False)
     friends_sent: list['Friend'] | None = Relationship(
         back_populates='sender',
         sa_relationship_kwargs={
@@ -56,6 +57,7 @@ class CurrentUser(UserBase):
     email: EmailStr
     email_verified_at: datetime | None
     is_active: bool
+    is_superuser: bool
 
 
 class UserPublic(UserBase):

@@ -1,3 +1,5 @@
+from sqlmodel import SQLModel
+
 from .user_model import User, UserBase, CurrentUser, UserPublic
 from .friend_model import FriendBase, Friend, FriendStatus, FriendRequest
 from .token_model import Token, TokenPayload, TokenType

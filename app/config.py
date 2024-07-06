@@ -25,6 +25,17 @@ class Settings(BaseSettings):
 settings = Settings()
 
 
+def get_database_url() -> str:
+    database_url = settings.DATABASE_URL
+
+    if database_url.startswith('postgres://'):
+        # to get around issue with heroku postgres
+        # https://stackoverflow.com/questions/52543783/connecting-heroku-database-to-sqlalchemy
+        database_url = database_url.replace('postgres://', 'postgresql://')
+
+    return database_url
+
+
 # @lru_cache
 # def get_settings():
 #     """
